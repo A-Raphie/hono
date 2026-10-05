@@ -188,6 +188,22 @@ export const runTest = ({
         expect(res[1].handler).toEqual('posts')
         expect(res[2].handler).toEqual('fallback')
       })
+
+      it('Should match an only-wildcard when the decoded path contains a line terminator', async () => {
+        // getPath() decodes the request path before routing, so a request to
+        // /a%0Ab reaches the router as a path containing a raw line feed.
+        router.add('GET', '/*', 'all')
+        const res = match('GET', '/a\nb')
+        expect(res.length).toBe(1)
+        expect(res[0].handler).toEqual('all')
+      })
+
+      it('Should match a tail wildcard when the decoded path contains a line terminator', async () => {
+        router.add('GET', '/wild/*', 'wildcard')
+        const res = match('GET', '/wild/a\nb')
+        expect(res.length).toBe(1)
+        expect(res[0].handler).toEqual('wildcard')
+      })
     })
 
     describe('Registration order', () => {

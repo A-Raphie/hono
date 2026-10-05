@@ -1,8 +1,11 @@
 import { createNullObject } from '../utils'
 
 export const LABEL_REG_EXP_STR = '[^/]+'
-export const ONLY_WILDCARD_REG_EXP_STR = '.*'
-export const TAIL_WILDCARD_REG_EXP_STR = '(?:|/.*)'
+// Wildcards must also match line terminators: getPath() decodes the request
+// path before routing, so a percent-encoded line feed can end up in it, and
+// `.` never matches a line terminator without the `s` flag.
+export const ONLY_WILDCARD_REG_EXP_STR = '[\\s\\S]*'
+export const TAIL_WILDCARD_REG_EXP_STR = '(?:|/[\\s\\S]*)'
 export const PATH_ERROR = Symbol()
 
 export type ParamAssocArray = [string, number][]
